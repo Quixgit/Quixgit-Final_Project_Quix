@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quix-app
+  labels:
+    app: quix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quix
+  template:
+    metadata:
+      labels:
+        app: quix
+    spec:
+      containers:
+      - name: quix
+        image: yourdockerhubusername/quixly-app:latest
+        ports:
+        - containerPort: 8080
