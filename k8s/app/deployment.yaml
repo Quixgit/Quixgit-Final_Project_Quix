@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
         - name: python-server
-          image: quixq/python-server:latest
+          image: quixq/python-server:latest-7c67158bf45f8452776413b9b5b0c17746afed3d
           ports:
             - containerPort: 8080
