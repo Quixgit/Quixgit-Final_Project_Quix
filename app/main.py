@@ -5,7 +5,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == '/':
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b'Ура! Я победил тебя.')
+            self.wfile.write(b'Hi, Quix/ It works!')
         else:
             self.send_response(404)
             self.end_headers()
