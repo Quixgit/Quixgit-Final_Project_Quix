@@ -3,7 +3,7 @@ name: Build and Push Python Server Image
 on:
   push:
     branches:
-      - main  # Можно заменить на мастер, если это основная ветка
+      - main
   workflow_dispatch:
 
 jobs:
@@ -22,16 +22,30 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build the image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./app  # Путь к директории с Dockerfile
-          file: ./app/Dockerfile  # Указание конкретного Dockerfile
+          context: ./app
+          file: ./app/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          tags: quixq/python-server:latest  # Тег для Docker Hub
+          tags: |
+            quixq/python-server:latest
+            quixq/python-server:latest-${{ github.sha }}
+
+      - name: Update Kubernetes deployment image tag
+        run: |
+          sed -i "s|quixq/python-server:.*|quixq/python-server:latest-${GITHUB_SHA}|" k8s/app/deployment.yaml
+
+      - name: Commit and push updated deployment
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add k8s/app/deployment.yaml
+          git commit -m "Update image tag to latest-${GITHUB_SHA}" || echo "No changes to commit"
+          git push
 
       - name: Debug
         run: |
           echo "DockerHub Username: ${{ secrets.DOCKERHUB_USERNAME }}"
-          echo "DockerHub Token: ${{ secrets.DOCKERHUB_TOKEN }}"
+          echo "Image tag used: latest-${GITHUB_SHA}"
