@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: python-server
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  source:
+    repoURL: https://github.com/Quixgit/Quixgit-Final_Project_Quix.git
+    targetRevision: main
+    path: k8s/app
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
