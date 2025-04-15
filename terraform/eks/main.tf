@@ -1,10 +1,10 @@
 provider "aws" {
-  region = "eu_north-1"
+  region = "eu-north-1"
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.14.2"
+  version = "5.1.2"
 
   name = "quixly-vpc"
   cidr = "10.0.0.0/16"
@@ -15,10 +15,6 @@ module "vpc" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
-
-  tags = {
-    Name = "quixly-vpc"
-  }
 }
 
 module "eks" {
@@ -26,22 +22,21 @@ module "eks" {
   version = "19.15.3"
 
   cluster_name    = "quixly-cluster"
-  cluster_version = "1.27"
-  subnets         = module.vpc.private_subnets
-  vpc_id          = module.vpc.vpc_id
+  cluster_version = "1.29"
 
-  node_groups = {
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  enable_irsa = true
+
+  eks_managed_node_groups = {
     default = {
-      desired_capacity = 1
-      max_capacity     = 1
-      min_capacity     = 1
+      desired_size = 1
+      max_size     = 2
+      min_size     = 1
 
       instance_types = ["t3.medium"]
+      capacity_type  = "ON_DEMAND"
     }
-  }
-
-  tags = {
-    Environment = "dev"
-    Name        = "quixly-eks"
   }
 }

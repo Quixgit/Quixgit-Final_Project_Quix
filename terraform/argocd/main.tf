@@ -1,3 +1,13 @@
+provider "kubernetes" {
+  config_path = "/root/.kube/config"
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "/root/.kube/config"
+  }
+}
+
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
