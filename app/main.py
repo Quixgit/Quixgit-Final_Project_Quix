@@ -10,7 +10,7 @@ class Handler(BaseHTTPRequestHandler):
                 <html>
                     <head><title>It works!</title></head>
                     <body>
-                        <h1>I'am Quix 🎉</h1>
+                        <h1>Hello 🎉</h1>
                         <p>IP pod: {ip}</p>
                     </body>
                 </html>
